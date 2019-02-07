@@ -60,11 +60,10 @@
 		B41A1DA42208E96900A01004 /* Check-o */ = {
 			isa = PBXGroup;
 			children = (
+				B49376B0220CBD7E003C8F52 /* Supporting Files */,
 				B41A1DB92208EDFE00A01004 /* Model */,
 				B41A1DB82208EDF400A01004 /* Controller */,
 				B41A1DB72208EDEC00A01004 /* Views */,
-				B41A1DAC2208E96A00A01004 /* Assets.xcassets */,
-				B41A1DB12208E96A00A01004 /* Info.plist */,
 			);
 			path = "Check-o";
 			sourceTree = "<group>";
@@ -103,6 +102,15 @@
 				B41A1DC02208F70200A01004 /* CustomToDoItemCell.xib */,
 			);
 			path = "Custom To Do Item";
+			sourceTree = "<group>";
+		};
+		B49376B0220CBD7E003C8F52 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B41A1DAC2208E96A00A01004 /* Assets.xcassets */,
+				B41A1DB12208E96A00A01004 /* Info.plist */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,7 +336,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 273WDX3M6W;
-				INFOPLIST_FILE = "Check-o/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Check-o/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -346,7 +354,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 273WDX3M6W;
-				INFOPLIST_FILE = "Check-o/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Check-o/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

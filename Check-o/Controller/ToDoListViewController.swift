@@ -12,23 +12,13 @@ class ToDoListViewController: UITableViewController {
     
     var toDoItemArray = [ToDoItem]()
     
-    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("ToDoItem.plist")
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let newToDoItem = ToDoItem()
-        newToDoItem.itemText = "Buy Eggs"
-        toDoItemArray.append(newToDoItem)
-        
-        let newToDoItem1 = ToDoItem()
-        newToDoItem1.itemText = "Buy Ham"
-        toDoItemArray.append(newToDoItem1)
-        
-        let newToDoItem2 = ToDoItem()
-        newToDoItem2.itemText = "Go to the GYM"
-        toDoItemArray.append(newToDoItem2)
-        
+        loadItems()
+    
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
@@ -63,7 +53,7 @@ class ToDoListViewController: UITableViewController {
         
         toDoItemArray[indexPath.row].doneStatus = !toDoItemArray[indexPath.row].doneStatus
         
-        tableView.reloadData()
+        self.saveItems()
 
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -85,11 +75,14 @@ class ToDoListViewController: UITableViewController {
         
             self.toDoItemArray.append(newItem)
             
-            self.tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
+            self.saveItems()
+            
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in
+            
             self.dismiss(animated: true, completion: nil)
+            
         }
         
         alert.addTextField { (alertTextField) in
@@ -108,6 +101,44 @@ class ToDoListViewController: UITableViewController {
     }
     
     
+    // MARK - Encodeing & Decoding Methods
+    
+    
+    func saveItems () {
+        
+        let encoder = PropertyListEncoder()
+        
+        do{
+            
+            let data = try encoder.encode(toDoItemArray)
+            
+            try data.write(to: dataFilePath!)
+            
+            
+        } catch {
+            
+            print ("Error saving data \(error)")
+            
+        }
+        self.tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
+        
+    }
+    
+    func loadItems () {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            
+            let decoder = PropertyListDecoder ()
+            
+            do {
+                try toDoItemArray = decoder.decode([ToDoItem].self, from: data)
+            } catch {
+                
+                print ("Error Decoding Data \(error)")
+                
+            }
+        }
+    }
     
 }
 
