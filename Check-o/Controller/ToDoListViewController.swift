@@ -55,6 +55,9 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(toDoItemArray[indexPath.row])
         
+        //context.delete(toDoItemArray[indexPath.row])
+        //toDoItemArray.remove(at: indexPath.row)
+        
         toDoItemArray[indexPath.row].doneStatus = !toDoItemArray[indexPath.row].doneStatus
         
         self.saveItems()
