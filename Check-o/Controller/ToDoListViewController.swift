@@ -13,7 +13,8 @@ class ToDoListViewController: UITableViewController {
     
     var toDoItemArray = [ToDoItem]()
     
-   
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
@@ -21,14 +22,19 @@ class ToDoListViewController: UITableViewController {
         
         print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        loadItems()
+        let request : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest()
+        
+        loadItems(with : request)
+        
+        searchBar.delegate = self
     
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
+        
     }
     
-    //MARK - TableView DataSource Methods
+//MARK - TableView DataSource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoItemArray.count
@@ -50,7 +56,7 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-    //MARK - TableView Delegate Methods
+//MARK: - TableView Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(toDoItemArray[indexPath.row])
@@ -65,7 +71,7 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    //MARK - Add New Items
+//MARK: - Add New Items
     
     
     @IBAction func addNewToDo(_ sender: UIBarButtonItem) {
@@ -110,7 +116,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     
-    // MARK - Encodeing & Decoding Methods
+//MARK: - Creating & Reading Core Data
     
     
     func saveItems () {
@@ -122,26 +128,41 @@ class ToDoListViewController: UITableViewController {
         } catch {
             
             print ("Error saving context \(error)")
-    
+            
         }
-        self.tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
+        
+        tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
     }
     
-     func loadItems () {
-        
-        let request : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest()
+    func loadItems (with  request : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest() ) {
         
         do {
             toDoItemArray = try context.fetch(request)
         } catch {
-            
             print ("Error Fetching Data From Context \(error)")
-            
         }
         
+        tableView.reloadData()
+     }
+}
+
+
+//MARK: - Search Bar Delegate Methods
+
+extension ToDoListViewController : UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request : NSFetchRequest = ToDoItem.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "itemText CONTAINS [cd] %@", searchBar.text!)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "itemText", ascending: true)]
+        
+        loadItems(with : request)
         
 
-     }
+    }
     
 }
 
