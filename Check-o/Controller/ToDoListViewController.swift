@@ -27,18 +27,23 @@ class ToDoListViewController: UITableViewController {
         loadItems(with : request)
         
         searchBar.delegate = self
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector (tableViewTapped))
+        tableView.addGestureRecognizer(tapGesture)
     
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
         
     }
+
     
 //MARK - TableView DataSource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoItemArray.count
     }
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -97,6 +102,7 @@ class ToDoListViewController: UITableViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in
             
             self.dismiss(animated: true, completion: nil)
+            self.tableView.reloadData()
             
         }
         
@@ -151,6 +157,12 @@ class ToDoListViewController: UITableViewController {
 
 extension ToDoListViewController : UISearchBarDelegate {
     
+    @objc func tableViewTapped() {
+        
+        searchBar.endEditing(true)
+        
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
         let request : NSFetchRequest = ToDoItem.fetchRequest()
@@ -160,9 +172,23 @@ extension ToDoListViewController : UISearchBarDelegate {
         request.sortDescriptors = [NSSortDescriptor(key: "itemText", ascending: true)]
         
         loadItems(with : request)
-        
 
     }
     
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String){
+        
+        if searchBar.text?.count == 0 {
+            
+            loadItems()
+            
+            DispatchQueue.main.async {
+                
+                searchBar.resignFirstResponder()
+                
+            }
+        }
+    }
 }
+
+
 
