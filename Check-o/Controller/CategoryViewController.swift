@@ -20,16 +20,14 @@ class CategoryViewController: UITableViewController {
         
          print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        let request : NSFetchRequest<Category> = Category.fetchRequest()
-        
-        loadItems(with: request)
+        loadItems()
         
         tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
 
 
     }
-    
-//MARK: - TableView DataSource Methods
+        
+    //MARK: - TableView DataSource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -50,8 +48,25 @@ class CategoryViewController: UITableViewController {
     }
     
 
+    //MARK: - Data Source Delegate Methods
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let destinationVC = segue.destination as! ToDoListViewController
+        if let indexPath = tableView.indexPathForSelectedRow {
+            
+            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            
+        }
+        
+    }
 
-//MARK: - Add New Categories
+
+    //MARK: - Add New Categories
     
     @IBAction func addNewCategory(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -85,7 +100,7 @@ class CategoryViewController: UITableViewController {
     
     }
     
-//MARK: - TableView Manipulation Methods
+    //MARK: - TableView Manipulation Methods
     
     func saveItems () {
         
