@@ -9,7 +9,9 @@
 import UIKit
 import CoreData
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: UITableViewController{
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     
     var toDoItemArray = [ToDoItem]()
     var selectedCategory : Category? {
@@ -20,7 +22,7 @@ class ToDoListViewController: UITableViewController {
     
     @IBOutlet weak var searchBar: UISearchBar!
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +37,7 @@ class ToDoListViewController: UITableViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
+        
         
     }
 
@@ -143,46 +146,28 @@ class ToDoListViewController: UITableViewController {
         tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
     }
     
-    func loadItems(with request: NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest(), additionalPredicate: NSPredicate? = nil) {
-        
-        var predicate = NSPredicate(format: "parentCategory.categoryName MATCHES %@", selectedCategory!.categoryName!)
-        
-        if additionalPredicate != nil {
-            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, additionalPredicate!])
-        }
-        
-        request.predicate = predicate
-        
-        do {
-            toDoItemArray = try context.fetch(request)
-        } catch {
-            print ("Error Fetching Data From Context \(error)")
-        }
-        
-            tableView.reloadData()
-    }
+    func loadItems (with  request : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest(), predicate : NSPredicate? = nil) {
     
+        let categoryPredicate = NSPredicate(format: "parentCategory.categoryName MATCHES %@", selectedCategory!.categoryName!)
+    
+        if let additionalPredicate = predicate {
+                request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else {
+                request.predicate = categoryPredicate
+        }
+    
+        do {
+                toDoItemArray = try context.fetch(request)
+        } catch {
+                print ("Error Fetching Data From Context \(error)")
+        }
+    
+            tableView.reloadData()
+        }
     
 }
     
-//    func loadItems (with  request : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest(), predicate : NSPredicate? = nil) {
-//
-//        let categoryPredicate = NSPredicate(format: "parentCategory.categoryName MATCHES %@", selectedCategory!.categoryName!)
-//
-//        if let additionalPredicate = predicate {
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//
-//        do {
-//            toDoItemArray = try context.fetch(request)
-//        } catch {
-//            print ("Error Fetching Data From Context \(error)")
-//        }
-//
-//        tableView.reloadData()
-//     }
+
 
 
 
@@ -198,13 +183,14 @@ extension ToDoListViewController : UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
+        
         let request : NSFetchRequest = ToDoItem.fetchRequest()
         
         let predicate = NSPredicate(format: "itemText CONTAINS[cd] %@", searchBar.text!)
         
         request.sortDescriptors = [NSSortDescriptor(key: "itemText", ascending: true)]
         
-        loadItems(with: request, additionalPredicate: predicate)
+        loadItems(with: request, predicate: predicate)
 
     }
     
@@ -216,7 +202,7 @@ extension ToDoListViewController : UISearchBarDelegate {
             
             DispatchQueue.main.async {
                 
-                searchBar.resignFirstResponder()
+            searchBar.resignFirstResponder()
                 
             }
         }
