@@ -7,22 +7,33 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-    var categoryArray = [Category]()
+    var categoryArray : Results<Category>?
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let realm = try! Realm()
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    
+    
+    //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-         print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        loadItems()
+        searchBar.delegate = self
         
-        tableView.register(UINib(nibName: "CustomToDoItemCell", bundle: nil), forCellReuseIdentifier: "CustomToDoItemCell")
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector (tableViewTapped))
+        tableView.addGestureRecognizer(tapGesture)
+        tapGesture.cancelsTouchesInView = false
+        
+
+        loadCategories()
+        
 
 
     }
@@ -31,17 +42,17 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return categoryArray.count
+        return categoryArray?.count ?? 1
         
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomToDoItemCell", for: indexPath) as! CustomToDoItemCell
-        let item = categoryArray[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
-        cell.toDoBodyText?.text = item.categoryName
-        cell.toDoBodyText = UILabel(frame: CGRect(x: 16, y: 11, width: 160, height: 21))
+        let item = categoryArray?[indexPath.row]
+        
+        cell.textLabel?.text = item?.categoryName ?? "No Categories Added Yet"
         
         return cell
         
@@ -51,7 +62,12 @@ class CategoryViewController: UITableViewController {
     //MARK: - Data Source Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "goToItems", sender: self)
+        if categoryArray?[indexPath.row] != nil{
+            try! realm.write {
+                performSegue(withIdentifier: "goToItems", sender: self)
+                print(categoryArray![indexPath.row])
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -59,7 +75,7 @@ class CategoryViewController: UITableViewController {
         let destinationVC = segue.destination as! ToDoListViewController
         if let indexPath = tableView.indexPathForSelectedRow {
             
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            destinationVC.selectedCategory = categoryArray?[indexPath.row]
             
         }
         
@@ -73,10 +89,10 @@ class CategoryViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Check-o Category", message: "", preferredStyle: .alert)
         let addNewCategory = UIAlertAction(title: "Add New Category", style: .default) { (addNewCategory) in
             
-            let newItem = Category(context: self.context)
-            newItem.categoryName = textField.text!
-            self.categoryArray.append(newItem)
-            self.saveItems()
+            let newCategory = Category()
+            newCategory.categoryName = textField.text!
+            newCategory.dateCreated = Date()
+            self.saveItems(category: newCategory)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in
@@ -102,29 +118,58 @@ class CategoryViewController: UITableViewController {
     
     //MARK: - TableView Manipulation Methods
     
-    func saveItems () {
+    func saveItems (category : Category) {
         
         do {
             
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
             
-        } catch {
+        } catch let err {
             
-            print ("Error saving context \(error)")
+            print (err)
             
         }
         
         tableView.reloadData() //This method reloads data so the new item from the text field alert is added to the To Do Item Array
     }
     
-    func loadItems (with  request : NSFetchRequest<Category> = Category.fetchRequest()) {
+   func loadCategories () {
+    
+            categoryArray = realm.objects(Category.self).sorted(byKeyPath: "categoryName", ascending: true)
+            tableView.reloadData()
+    }
+ 
+}
+
+
+extension CategoryViewController : UISearchBarDelegate {
+    
+    @objc func tableViewTapped () {
         
-        do {
-            categoryArray = try context.fetch(request)
-        } catch {
-            print ("Error Fetching Data From Context \(error)")
-        }
-        
+        searchBar.endEditing(true)
+    }
+    
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        categoryArray = categoryArray?.filter("categoryName CONTAINS %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
     }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text?.count == 0 {
+            loadCategories()
+            
+            DispatchQueue.main.async {
+                
+                searchBar.resignFirstResponder()
+                
+            }
+        }
+        
+    }
+    
+    
 }
