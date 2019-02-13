@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     var categoryArray : Results<Category>?
     
@@ -34,7 +35,7 @@ class CategoryViewController: UITableViewController {
 
         loadCategories()
         
-
+        tableView.separatorStyle = .none
 
     }
         
@@ -48,11 +49,13 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+    
         let item = categoryArray?[indexPath.row]
         
         cell.textLabel?.text = item?.categoryName ?? "No Categories Added Yet"
+        
+        cell.backgroundColor = UIColor.randomFlat
         
         return cell
         
@@ -140,7 +143,19 @@ class CategoryViewController: UITableViewController {
             categoryArray = realm.objects(Category.self).sorted(byKeyPath: "categoryName", ascending: true)
             tableView.reloadData()
     }
- 
+    
+    //MARK: - Delete Data From Swipe
+    
+    override func updateModle(at indexPath: IndexPath) {
+        
+        if let categoryForDeletion = self.categoryArray?[indexPath.row] {
+            
+            try! self.realm.write {
+                 self.realm.delete(categoryForDeletion)
+            }
+            //self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    } 
 }
 
 
@@ -168,8 +183,8 @@ extension CategoryViewController : UISearchBarDelegate {
                 
             }
         }
-        
     }
-    
-    
 }
+
+
+

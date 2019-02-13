@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UITableViewController{
+class ToDoListViewController: SwipeTableViewController{
     //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
@@ -35,6 +35,7 @@ class ToDoListViewController: UITableViewController{
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector (tableViewTapped))
         tableView.addGestureRecognizer(tapGesture)
         tapGesture.cancelsTouchesInView = false
+        
     
         // Do any additional setup after loading the view, typically from a nib.
         
@@ -51,8 +52,8 @@ class ToDoListViewController: UITableViewController{
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+    
         if let item = toDoItem?[indexPath.row] {
             cell.textLabel?.text = item.itemText
             cell.accessoryType = item.doneStatus == true ? .checkmark : .none
@@ -141,7 +142,19 @@ class ToDoListViewController: UITableViewController{
         tableView.reloadData()
         
         }
+    
+    override func updateModle(at indexPath: IndexPath) {
+        
+        if let itemForDeletion = self.toDoItem?[indexPath.row] {
+            try! self.realm.write {
+                 self.realm.delete(itemForDeletion)
+            }
+        }
+    }
+    
 }
+
+
     
 
 

@@ -15,6 +15,7 @@
 		B41A1DB02208E96A00A01004 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B41A1DAE2208E96A00A01004 /* LaunchScreen.storyboard */; };
 		B41A1DC12208F70200A01004 /* CustomToDoItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41A1DBF2208F70200A01004 /* CustomToDoItemCell.swift */; };
 		B41A1DC22208F70200A01004 /* CustomToDoItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B41A1DC02208F70200A01004 /* CustomToDoItemCell.xib */; };
+		B42A0790221393700032371A /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42A078F221393700032371A /* SwipeTableViewController.swift */; };
 		B438B2322212409F00C0C6C4 /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B438B2312212409F00C0C6C4 /* ToDoItem.swift */; };
 		B438B234221240B400C0C6C4 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = B438B233221240B400C0C6C4 /* Category.swift */; };
 		B47CB640220E48A100D70ED2 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47CB63F220E48A100D70ED2 /* CategoryViewController.swift */; };
@@ -32,6 +33,7 @@
 		B41A1DB12208E96A00A01004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B41A1DBF2208F70200A01004 /* CustomToDoItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToDoItemCell.swift; sourceTree = "<group>"; };
 		B41A1DC02208F70200A01004 /* CustomToDoItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomToDoItemCell.xib; sourceTree = "<group>"; };
+		B42A078F221393700032371A /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		B438B2312212409F00C0C6C4 /* ToDoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
 		B438B233221240B400C0C6C4 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		B47CB63F220E48A100D70ED2 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				B41A1DA52208E96900A01004 /* AppDelegate.swift */,
 				B47CB63F220E48A100D70ED2 /* CategoryViewController.swift */,
 				B41A1DA72208E96900A01004 /* ToDoListViewController.swift */,
+				B42A078F221393700032371A /* SwipeTableViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -222,15 +225,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Check-o/Pods-Check-o-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -269,6 +276,7 @@
 				B47CB640220E48A100D70ED2 /* CategoryViewController.swift in Sources */,
 				B41A1DA82208E96900A01004 /* ToDoListViewController.swift in Sources */,
 				B438B2322212409F00C0C6C4 /* ToDoItem.swift in Sources */,
+				B42A0790221393700032371A /* SwipeTableViewController.swift in Sources */,
 				B41A1DA62208E96900A01004 /* AppDelegate.swift in Sources */,
 				B41A1DC12208F70200A01004 /* CustomToDoItemCell.swift in Sources */,
 				B438B234221240B400C0C6C4 /* Category.swift in Sources */,
