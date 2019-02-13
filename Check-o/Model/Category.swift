@@ -13,6 +13,7 @@ class Category : Object {
     
     @objc dynamic var categoryName : String = ""
     @objc dynamic var dateCreated : Date?
+    @objc dynamic var colour : String = ""
     let toDoItems = List<ToDoItem>() // This variable is gonna contain a list of ToDoItems initialize with empty array, Forward relationship that point to a list of items objects.
     
     

@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController{
     //let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -36,9 +37,8 @@ class ToDoListViewController: SwipeTableViewController{
         tableView.addGestureRecognizer(tapGesture)
         tapGesture.cancelsTouchesInView = false
         
-    
-        // Do any additional setup after loading the view, typically from a nib.
-        
+        tableView.separatorStyle = .none
+
         
     }
 
@@ -55,12 +55,24 @@ class ToDoListViewController: SwipeTableViewController{
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
     
         if let item = toDoItem?[indexPath.row] {
+            
             cell.textLabel?.text = item.itemText
+            
             cell.accessoryType = item.doneStatus == true ? .checkmark : .none
+            
+            if let colour = UIColor(hexString: selectedCategory!.colour)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(toDoItem!.count)) {
+    
+                cell.backgroundColor = colour
+                
+                cell.textLabel?.textColor = ContrastColorOf(colour, returnFlat: true )
+            }
+            
+            
             
         } else {
             cell.textLabel?.text = "No Items Added Yet"
         }
+        
         
         return cell
         
@@ -153,12 +165,6 @@ class ToDoListViewController: SwipeTableViewController{
     }
     
 }
-
-
-    
-
-
-
 
 //MARK: - Search Bar Delegate Methods
 
